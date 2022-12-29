@@ -24,6 +24,7 @@ class Game {
         // Create game world
         this.player = new Player(canvas);
         this.arena = new Arena(canvas);
+        this.bullets = new Array();
 
         // Set up mouse event listeners
         canvas.addEventListener("mousemove", (e) => this.onMouseMove(e));
@@ -40,6 +41,11 @@ class Game {
         dt *= 0.3;
 
         this.player.update(dt, this);
+        for (var i = 0; i < this.bullets.length; i++) {
+            this.bullets[i].update(dt, this);
+        }
+        // filter out dead bullets (offscreen)
+        this.bullets = this.bullets.filter(bullet => bullet.alive);
     }
 
     render() {
@@ -47,6 +53,9 @@ class Game {
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.player.render(this.canvas, this.context);
+        for (var i = 0; i < this.bullets.length; i++) {
+            this.bullets[i].render(this.canvas, this.context);
+        }
     }
 
     updateFps(dt) {
@@ -89,6 +98,8 @@ class Player {
         this.y = canvas.height * 0.9;
         this.width = 20;
         this.height = 20;
+        this.gunCooldown = 0.1; // time between shots
+        this.nextFire = Date.now() / 1000; // time after which we may fire gun
 
         this.buttons = {
             up: false,
@@ -102,22 +113,22 @@ class Player {
     }
 
     update(dt, game) {
-        var speed = 3;
+        // player movement
+        var speed = 800;
         if (this.buttons.left) {
-            this.x -= speed;
+            this.x -= speed * dt;
         }
         if (this.buttons.right) {
-            this.x += speed;
+            this.x += speed * dt;
         }
         if (this.buttons.up) {
-            this.y -= speed;
+            this.y -= speed * dt;
         }
         if (this.buttons.down) {
-            this.y += speed;
+            this.y += speed * dt;
         }
 
         // keep the player trapped inside the arena or they die mehehehehhehehehehehwhehwela kdnhaw lt
-
         if ((this.x - (this.width/2)) <= game.arena.x) {
             this.x = game.arena.x + (this.width/2);
         }
@@ -129,6 +140,13 @@ class Player {
         }
         if (this.y >= (game.arena.y + game.arena.height)) {
             this.y = (game.arena.y + game.arena.height);
+        }
+
+        // player bullets
+        if (this.buttons.space && (Date.now() / 1000) >= this.nextFire) {
+            game.bullets.push(new Bullet(this.x, (this.y - this.height), 0, -1000));
+            this.nextFire = (Date.now() / 1000) + this.gunCooldown; 
+            // console.log(Date.now());
         }
     }
 
@@ -187,6 +205,34 @@ class Player {
 // Enemy
 
 // Bullet
+class Bullet {
+    constructor(x, y, xSpeed, ySpeed) {
+        this.x = x;
+        this.y = y;
+        this.xSpeed = xSpeed;
+        this.ySpeed = ySpeed;
+        this.alive = true;
+    }
+
+    update(dt, game) {
+        this.x += this.xSpeed * dt;
+        this.y += this.ySpeed * dt;
+
+        //todo detect bullet has moved off the screen
+        if (this.y < game.arena.y) {
+            this.alive = false;
+        }
+    }
+
+    render(canvas, context) {
+        context.strokeStyle = "#ffffff";
+        context.beginPath(); 
+        context.arc(this.x, this.y, 2, 0, 2*Math.PI);
+        context.stroke();
+    }
+
+
+}
 
 // Explosion
 
