@@ -22,9 +22,11 @@ class Game {
         this.fps = 0;
 
         // Create game world
-        this.player = new Player(canvas);
         this.arena = new Arena(canvas);
+        this.player = new Player(this);
         this.bullets = new Array();
+        this.stars = new Array();
+        this.enemies = new Array();
 
         // Set up mouse event listeners
         canvas.addEventListener("mousemove", (e) => this.onMouseMove(e));
@@ -40,21 +42,47 @@ class Game {
         this.updateFps(dt);
         dt *= 0.3;
 
+        // update player
         this.player.update(dt, this);
+
+        // update bullets
         for (var i = 0; i < this.bullets.length; i++) {
             this.bullets[i].update(dt, this);
         }
         // filter out dead bullets (offscreen)
         this.bullets = this.bullets.filter(bullet => bullet.alive);
+
+        //update Stars
+        this.spawnBackgroundStars(); 
+        for (var i = 0; i < this.stars.length; i++) {
+            this.stars[i].update(dt, this);
+        }
+        // filter out dead enemies (offscreen)
+        this.enemies = this.enemies.filter(enemy => enemy.alive);
     }
 
     render() {
+        // render background
         this.context.fillStyle = '#000000';
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
+        // render player
         this.player.render(this.canvas, this.context);
+
+        // render bullets
         for (var i = 0; i < this.bullets.length; i++) {
             this.bullets[i].render(this.canvas, this.context);
+        }
+
+        // render stars
+        for (var i = 0; i < this.stars.length; i++) {
+            this.stars[i].render(this.canvas, this.context);
+        }    
+    }
+
+    spawnBackgroundStars() {
+        while (this.stars.length < 100) {
+            this.stars.push(new BackgroundStar(this));
         }
     }
 
@@ -93,9 +121,9 @@ class Game {
 
 // Player
 class Player {
-    constructor(canvas) {
-        this.x = canvas.width / 2;
-        this.y = canvas.height * 0.9;
+    constructor(game) {
+        this.x = game.arena.width / 2;
+        this.y = game.arena.height * 0.9;
         this.width = 20;
         this.height = 20;
         this.gunCooldown = 0.1; // time between shots
@@ -203,6 +231,35 @@ class Player {
 }
 
 // Enemy
+
+// background stars
+class BackgroundStar {
+    constructor(game) {
+        this.x = game.arena.x + game.arena.width * Math.random();
+        this.y = game.arena.y + game.arena.height * Math.random();
+        this.xSpeed = 0;
+        this.ySpeed = 50 + 100*Math.random();
+        this.alive = true;
+    }
+
+    update(dt, game) {
+        this.x += this.xSpeed * dt;
+        this.y += this.ySpeed * dt;
+
+        //todo detect star has moved off the screen
+        if (this.y > (game.arena.y + game.arena.height)) {
+            this.y = game.arena.y;
+        }
+    }
+
+    render(canvas, context) {
+        context.strokeStyle = "#008080";
+        context.beginPath(); 
+        context.arc(this.x, this.y, 0.5, 0, 2*Math.PI);
+        context.stroke();
+    }
+
+}
 
 // Bullet
 class Bullet {
