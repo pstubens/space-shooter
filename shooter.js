@@ -57,6 +57,13 @@ class Game {
         for (var i = 0; i < this.stars.length; i++) {
             this.stars[i].update(dt, this);
         }
+
+        //update enemies
+        this.spawnEnemy(); 
+        for (var i = 0; i < this.enemies.length; i++) {
+            this.enemies[i].update(dt, this);
+        }
+
         // filter out dead enemies (offscreen)
         this.enemies = this.enemies.filter(enemy => enemy.alive);
     }
@@ -78,11 +85,22 @@ class Game {
         for (var i = 0; i < this.stars.length; i++) {
             this.stars[i].render(this.canvas, this.context);
         }    
+
+        // render enemies
+        for (var i = 0; i < this.enemies.length; i++) {
+            this.enemies[i].render(this.canvas, this.context);
+        }  
     }
 
     spawnBackgroundStars() {
         while (this.stars.length < 100) {
             this.stars.push(new BackgroundStar(this));
+        }
+    }
+
+    spawnEnemy() {
+        while (this.enemies.length < 6) {
+            this.enemies.push(new Enemy(this));
         }
     }
 
@@ -231,6 +249,41 @@ class Player {
 }
 
 // Enemy
+class Enemy {
+    constructor(game) {
+        this.x = game.arena.x + game.arena.width * Math.random();
+        this.y = game.arena.y;
+        this.xSpeed = 0;
+        this.ySpeed = 50;
+        this.alive = true;
+        this.width = 30;
+        this.height = 30;
+        this.gunCooldown = 0.5; // time between shots
+        this.nextFire = Date.now() / 1000; // time after which we may fire gun
+    }
+
+    update(dt, game) {
+        this.x += this.xSpeed * dt;
+        this.y += this.ySpeed * dt;
+
+        //todo detect star has moved off the screen
+        if (this.y > (game.arena.y + game.arena.height)) {
+            this.y = game.arena.y;
+        }
+    }
+
+    render(canvas, context) {
+        context.strokeStyle = "#ffffff";
+        context.beginPath(); 
+        context.moveTo(this.x, this.y);
+        context.lineTo(this.x + this.width, this.y);
+        context.lineTo(this.x + this.width, this.y + this.height);
+        context.lineTo(this.x, this.y + this.height);
+        context.lineTo(this.x, this.y);
+        context.stroke();
+}
+
+}
 
 // background stars
 class BackgroundStar {
