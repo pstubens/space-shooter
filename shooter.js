@@ -66,6 +66,22 @@ class Game {
 
         // filter out dead enemies (offscreen)
         this.enemies = this.enemies.filter(enemy => enemy.alive);
+
+        // collision checking - need to rework for enemies and bullets
+        // bullets are a, enemies are b
+        // may redo to have shared collision function for player and enemies...this is gonna be a lot of functions
+        // so many different shapes
+        for (var i = 0; i < this.bullets.length; i++) {
+            var bullet = this.bullets[i];
+            for (var j = 0; j < this.enemies.length; j++) {
+                var enemy = this.enemies[j];
+                if (enemyHit(bullet, enemy)) { // collision detection is working!
+                    this.bullets.splice(i, 1);
+                    this.enemies.splice(j, 1);
+                }
+                
+            }
+        }
     }
 
     render() {
@@ -144,7 +160,7 @@ class Player {
         this.y = game.arena.height * 0.9;
         this.width = 20;
         this.height = 20;
-        this.gunCooldown = 0.1; // time between shots
+        this.gunCooldown = 0.2; // time between shots
         this.nextFire = Date.now() / 1000; // time after which we may fire gun
 
         this.buttons = {
@@ -188,9 +204,9 @@ class Player {
             this.y = (game.arena.y + game.arena.height);
         }
 
-        // player bullets
+        // player bullets and bullet values, last number is the radius in pixels
         if (this.buttons.space && (Date.now() / 1000) >= this.nextFire) {
-            game.bullets.push(new Bullet(this.x, (this.y - this.height), 0, -1000));
+            game.bullets.push(new Bullet(this.x, (this.y - this.height), 0, -1000, 2));
             this.nextFire = (Date.now() / 1000) + this.gunCooldown; 
             // console.log(Date.now());
         }
@@ -260,6 +276,7 @@ class Enemy {
         this.height = 30;
         this.gunCooldown = 0.5; // time between shots
         this.nextFire = Date.now() / 1000; // time after which we may fire gun
+        this.color = "#ff0000";
     }
 
     update(dt, game) {
@@ -273,7 +290,7 @@ class Enemy {
     }
 
     render(canvas, context) {
-        context.strokeStyle = "#ffffff";
+        context.strokeStyle = this.color;
         context.beginPath(); 
         context.moveTo(this.x, this.y);
         context.lineTo(this.x + this.width, this.y);
@@ -316,12 +333,14 @@ class BackgroundStar {
 
 // Bullet
 class Bullet {
-    constructor(x, y, xSpeed, ySpeed) {
+    constructor(x, y, xSpeed, ySpeed, r) {
         this.x = x;
         this.y = y;
         this.xSpeed = xSpeed;
         this.ySpeed = ySpeed;
         this.alive = true;
+        this.r = r;
+        this.color = "#FFFFFF"
     }
 
     update(dt, game) {
@@ -335,9 +354,9 @@ class Bullet {
     }
 
     render(canvas, context) {
-        context.strokeStyle = "#ffffff";
+        context.strokeStyle = this.color;
         context.beginPath(); 
-        context.arc(this.x, this.y, 2, 0, 2*Math.PI);
+        context.arc(this.x, this.y, this.r, 0, 2*Math.PI);
         context.stroke();
     }
 
@@ -397,4 +416,35 @@ function isOverlap(a, b) {
         return true;
     } 
     return false;
+}
+
+
+// check if bullets hit an enemy (square)
+// a is bullet, b is enemy
+// collision between circle and square
+function enemyHit(a, b) {
+    if (
+        ((a.y < b.y + b.height) && // top of circle to bottom of square
+        (a.y > b.y) && // circle below, greater y, than top line of square
+        ((a.x) > b.x) && // right of b.x
+        ((a.x) < (b.x + b.width))) // left of b.x + b. width
+    ) {
+        // collision
+        return true;
+    }
+    return false;
+
+}
+
+// check if bullets hit player (triangle)
+// a is bullet, b is player
+// collision between circle and triangle
+function playerHit(a, b) {
+
+}
+
+// or, do a shared function which detects all possible collisions and changes depending on the shape input of either triangle or square
+
+function isHit(a, b) {
+
 }
