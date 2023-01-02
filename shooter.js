@@ -33,9 +33,6 @@ class Game {
         canvas.addEventListener("mousedown", (e) => this.onMouseDown(e));
         canvas.addEventListener("mouseup",   (e) => this.onMouseUp(e));
         canvas.addEventListener("mouseout",  (e) => this.onMouseOut(e));
-
-        // Sounds
-        this.var
     }
 
     update(tframe) {
@@ -176,6 +173,9 @@ class Player {
         }
         window.addEventListener('keydown', (e) => this.keyDown(e));
         window.addEventListener('keyup', (e) => this.keyUp(e));
+
+        // detect if first time keydown method has run, play sound only on first time :)
+        this.intro = false; 
     }
 
     update(dt, game) {
@@ -228,6 +228,13 @@ class Player {
     }
 
     keyDown(e) {
+        if (this.intro === false) {
+            var wow = new Sound("sounds/kawaii_wow.mp3");
+            wow.setVolume(0.1);
+            wow.play();
+            this.intro = true;
+        } 
+
         switch (e.code) {
             case 'Space':
                 this.buttons.space = true;
@@ -282,7 +289,7 @@ class Enemy {
         this.nextFire = Date.now() / 1000; // time after which we may fire gun
         this.color = "#ff0000";
         this.scream = new Sound("sounds/Wilhelm scream.mp3");
-        this.scream.audio.volume = 0.3;
+        this.scream.setVolume(0.2);
     }
     
     update(dt, game) {
@@ -348,7 +355,7 @@ class Bullet {
         this.r = r;
         this.color = "#FFFFFF"
         this.shoot = new Sound("sounds/shoot.mp3");
-        this.shoot.audio.volume = 0.1; 
+        this.shoot.setVolume(0.1); 
         this.shoot.play();
         // console.log(this.shoot);
     }
@@ -470,5 +477,9 @@ class Sound {
 
     stop() {
         this.audio.pause();
+    }
+
+    setVolume(x) {
+        this.audio.volume = x;
     }
 }
