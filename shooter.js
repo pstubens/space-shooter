@@ -281,7 +281,8 @@ class Enemy {
         this.gunCooldown = 0.5; // time between shots
         this.nextFire = Date.now() / 1000; // time after which we may fire gun
         this.color = "#ff0000";
-        this.scream = new sound("sounds/Wilhelm scream.mp3");
+        this.scream = new Sound("sounds/Wilhelm scream.mp3");
+        this.scream.audio.volume = 0.3;
     }
     
     update(dt, game) {
@@ -346,8 +347,10 @@ class Bullet {
         this.alive = true;
         this.r = r;
         this.color = "#FFFFFF"
-        this.shoot = new sound("sounds/shoot.mp3");
+        this.shoot = new Sound("sounds/shoot.mp3");
+        this.shoot.audio.volume = 0.1; 
         this.shoot.play();
+        // console.log(this.shoot);
     }
 
     update(dt, game) {
@@ -455,18 +458,17 @@ function isHit(a, b) {
 }
 
 // adding sound!!!
-
-function sound(src) {
-    this.sound = document.createElement("audio");
-    this.sound.src = src;
-    // this.sound.setAttribute("preload", "auto");
-    // this.sound.setAttribute("controls", "none");
-    // this.sound.style.display = "none";
-    // document.body.appendChild(this.sound);
-    this.play = function(){
-        this.sound.play();
+class Sound {
+    constructor(src) {
+        this.audio = document.createElement("audio");
+        this.audio.src = src;
     }
-    this.stop = function(){
-        this.sound.pause();
+
+    play() {
+        this.audio.play();
+    }
+
+    stop() {
+        this.audio.pause();
     }
 }
