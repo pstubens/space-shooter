@@ -33,6 +33,9 @@ class Game {
         canvas.addEventListener("mousedown", (e) => this.onMouseDown(e));
         canvas.addEventListener("mouseup",   (e) => this.onMouseUp(e));
         canvas.addEventListener("mouseout",  (e) => this.onMouseOut(e));
+
+        // Sounds
+        this.var
     }
 
     update(tframe) {
@@ -267,10 +270,10 @@ class Player {
 // Enemy
 class Enemy {
     constructor(game) {
-        this.x = game.arena.x + game.arena.width * Math.random();
-        this.y = game.arena.y;
+        this.x = game.arena.x + (game.arena.width - 30) * Math.random();
+        this.y = game.arena.y - 40;
         this.xSpeed = 0;
-        this.ySpeed = 50;
+        this.ySpeed = 40 + (Math.random() * 60);
         this.alive = true;
         this.width = 30;
         this.height = 30;
