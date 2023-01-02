@@ -81,6 +81,7 @@ class Game {
                 if (enemyHit(bullet, enemy)) { // collision detection is working!
                     this.bullets.splice(i, 1);
                     this.enemies.splice(j, 1);
+                    enemy.scream.play();
                 }
                 
             }
@@ -280,8 +281,9 @@ class Enemy {
         this.gunCooldown = 0.5; // time between shots
         this.nextFire = Date.now() / 1000; // time after which we may fire gun
         this.color = "#ff0000";
+        this.scream = new sound("sounds/Wilhelm scream.mp3");
     }
-
+    
     update(dt, game) {
         this.x += this.xSpeed * dt;
         this.y += this.ySpeed * dt;
@@ -344,6 +346,8 @@ class Bullet {
         this.alive = true;
         this.r = r;
         this.color = "#FFFFFF"
+        this.shoot = new sound("sounds/shoot.mp3");
+        this.shoot.play();
     }
 
     update(dt, game) {
@@ -362,8 +366,6 @@ class Bullet {
         context.arc(this.x, this.y, this.r, 0, 2*Math.PI);
         context.stroke();
     }
-
-
 }
 
 // Explosion
@@ -450,4 +452,21 @@ function playerHit(a, b) {
 
 function isHit(a, b) {
 
+}
+
+// adding sound!!!
+
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    // this.sound.setAttribute("preload", "auto");
+    // this.sound.setAttribute("controls", "none");
+    // this.sound.style.display = "none";
+    // document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
 }
