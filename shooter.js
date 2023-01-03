@@ -79,8 +79,16 @@ class Game {
                     this.bullets.splice(i, 1);
                     this.enemies.splice(j, 1);
                     enemy.scream.play();
-                }
-                
+                }  
+            }
+        }
+
+        // collision checking for player and enemies
+        for (var i = 0; i < this.enemies.length; i++) {
+            var enemy = this.enemies[i];
+            if (playerEnemyHit(this.player, enemy)) {
+                enemy.scream.play();
+                console.log("hit");
             }
         }
     }
@@ -159,8 +167,8 @@ class Player {
     constructor(game) {
         this.x = game.arena.width / 2;
         this.y = game.arena.height * 0.9;
-        this.width = 20;
-        this.height = 20;
+        this.width = 40;
+        this.height = 40;
         this.gunCooldown = 0.2; // time between shots
         this.nextFire = Date.now() / 1000; // time after which we may fire gun
 
@@ -433,6 +441,9 @@ function isOverlap(a, b) {
     return false;
 }
 
+// create new function for player collision with enemy
+
+
 
 // check if bullets hit an enemy (square)
 // a is bullet, b is enemy
@@ -451,17 +462,20 @@ function enemyHit(a, b) {
 
 }
 
-// check if bullets hit player (triangle)
-// a is bullet, b is player
-// collision between circle and triangle
+// test each side of the triangle against every side of the square
+// same format for the bullet. if any side collides with bullet coord
 function playerHit(a, b) {
 
 }
 
-// or, do a shared function which detects all possible collisions and changes depending on the shape input of either triangle or square
-
-function isHit(a, b) {
-
+// a is Player, b is Enemy
+function playerEnemyHit(a, b) {
+    var t = new Triangle(
+        new Point(a.x - (a.width / 2), a.y),
+        new Point(a.x, a.y - a.height),
+        new Point(a.x + (a.width / 2), a.y)
+    );
+    return triangleSquareCollision(t, b);
 }
 
 // adding sound!!!
@@ -483,3 +497,5 @@ class Sound {
         this.audio.volume = x;
     }
 }
+
+
