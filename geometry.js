@@ -129,3 +129,20 @@ function test() {
 
 test();
 
+// // shapes for testing purposes
+// var square = (
+//     x = 100,
+//     y = 100,
+//     width = 100,
+//     height = 100
+// )
+
+// var triangle = (
+
+// )
+
+// function test2() {
+    
+// }
+
+// test2();

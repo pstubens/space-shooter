@@ -88,7 +88,6 @@ class Game {
             var enemy = this.enemies[i];
             if (playerEnemyHit(this.player, enemy)) {
                 enemy.scream.play();
-                console.log("hit");
             }
         }
     }
