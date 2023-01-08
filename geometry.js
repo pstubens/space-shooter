@@ -114,6 +114,25 @@ function isInSquare(pos, square) {
     }
 }
 
+function sign(p1, p2, p3)
+{
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+}
+
+// check point in triangle
+function pointInTriangle(p, t)
+{
+    // d1 = sign(p, t.p1, t.p2);
+    // d2 = sign(p, t.p2, t.p3);
+    // d3 = sign(p, t.p3, t.p1);
+    d1 = sign(p, t.points[0], t.points[1]);
+    d2 = sign(p, t.points[1], t.points[2]);
+    d3 = sign(p, t.points[2], t.points[0]);
+    has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+    has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+    return !(has_neg && has_pos);
+}
+
 // tests
 function test() {
     var p1 = new Point(10, 10);

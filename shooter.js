@@ -83,11 +83,19 @@ class Game {
             }
         }
 
-        // collision checking for player and enemies
+        // collision checking for Player and Enemies
         for (var i = 0; i < this.enemies.length; i++) {
             var enemy = this.enemies[i];
             if (playerEnemyHit(this.player, enemy)) {
                 enemy.scream.play();
+            }
+        }
+
+        // collision checking for Player and Bullets
+        for (var i = 0; i < this.bullets.length; i++) {
+            var bullet = this.bullets[i];
+            if (playerHit(this.player, bullet)) {
+                this.player.scream.play();
             }
         }
     }
@@ -170,7 +178,8 @@ class Player {
         this.height = 40;
         this.gunCooldown = 0.2; // time between shots
         this.nextFire = Date.now() / 1000; // time after which we may fire gun
-
+        this.scream = new Sound("sounds/Wilhelm scream.mp3");
+        this.scream.setVolume(0.2);
         this.buttons = {
             up: false,
             down: false,
@@ -463,8 +472,16 @@ function enemyHit(a, b) {
 
 // test each side of the triangle against every side of the square
 // same format for the bullet. if any side collides with bullet coord
+// a is the Player
+// b is the Bullet (the point)
 function playerHit(a, b) {
-
+    var p = new Point(b.x, b.y);
+    var t = new Triangle(
+        new Point(a.x - (a.width / 2), a.y),
+        new Point(a.x, a.y - a.height),
+        new Point(a.x + (a.width / 2), a.y)
+    );
+    return pointInTriangle(p, t);
 }
 
 // a is Player, b is Enemy
