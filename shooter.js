@@ -78,7 +78,7 @@ class Game {
                 if (enemyHit(bullet, enemy)) { // collision detection is working!
                     this.bullets.splice(i, 1);
                     this.enemies.splice(j, 1);
-                    enemy.scream.play();
+                    enemy.explosion.play();
                 }  
             }
         }
@@ -174,8 +174,8 @@ class Player {
     constructor(game) {
         this.x = game.arena.width / 2;
         this.y = game.arena.height * 0.9;
-        this.width = 40;
-        this.height = 40;
+        this.width = 20;
+        this.height = 20;
         this.gunCooldown = 0.2; // time between shots
         this.nextFire = Date.now() / 1000; // time after which we may fire gun
         this.scream = new Sound("sounds/Wilhelm scream.mp3");
@@ -301,11 +301,13 @@ class Enemy {
         this.alive = true;
         this.width = 30;
         this.height = 30;
-        this.gunCooldown = 0.5; // time between shots
-        this.nextFire = Date.now() / 1000; // time after which we may fire gun
+        this.gunCooldown = Math.random() * 5; // time between shots
+        this.nextFire = (Date.now() / 1000) + (Math.random() * 5); // time after which enemy may fire gun
         this.color = "#ff0000";
         this.scream = new Sound("sounds/Wilhelm scream.mp3");
         this.scream.setVolume(0.2);
+        this.explosion = new Sound("sounds/explosion.mp3");
+        this.explosion.setVolume(0.1);
     }
     
     update(dt, game) {
@@ -315,6 +317,13 @@ class Enemy {
         //todo detect star has moved off the screen
         if (this.y > (game.arena.y + game.arena.height)) {
             this.y = game.arena.y;
+        }
+
+        // enemies create bullets THEY GO PEW PEW
+        // have each enemy have a bullet fire once every 5 + (1-5) seconds with a 5 second firedelay
+        if ((Date.now() / 1000) >= this.nextFire) {
+            game.bullets.push(new Bullet(this.x + (this.width / 2), this.y + this.height, 0, 500, 2));
+            this.nextFire = (Date.now() / 1000) + (Math.random() * 5) ; 
         }
     }
 
