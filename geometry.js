@@ -74,10 +74,10 @@ function triangleSquareCollision(t, s) {
 // `s` must have attributes: x, y, width, height
 function getSquareCorners(s) {
     var corners = new Array();
-    corners.push(s.x, s.y);
-    corners.push(s.x + s.width, s.y);
-    corners.push(s.x + s.width, s.y + s.height);
-    corners.push(s.x, s.y + s.height);
+    corners.push(new Point(s.x, s.y));
+    corners.push(new Point(s.x + s.width, s.y));
+    corners.push(new Point(s.x + s.width, s.y + s.height));
+    corners.push(new Point(s.x, s.y + s.height));
     return corners;
 }
 
@@ -120,8 +120,6 @@ function test() {
     var p2 = new Point(20, 20);
     var p3 = new Point(10, 20);
     var p4 = new Point(20, 10);
-    var l1 = new LineSegment(p1, p2);
-    var l2 = new LineSegment(p3, p4);
     if (intersects(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y)) {
         console.log("collision");
     }
@@ -129,20 +127,3 @@ function test() {
 
 test();
 
-// // shapes for testing purposes
-// var square = (
-//     x = 100,
-//     y = 100,
-//     width = 100,
-//     height = 100
-// )
-
-// var triangle = (
-
-// )
-
-// function test2() {
-    
-// }
-
-// test2();
