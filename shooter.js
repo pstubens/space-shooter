@@ -88,6 +88,8 @@ class Game {
             var enemy = this.enemies[i];
             if (playerEnemyHit(this.player, enemy)) {
                 enemy.scream.play();
+                enemy.alive = false;
+                this.player.resetPosition(this);
             }
         }
 
@@ -95,7 +97,9 @@ class Game {
         for (var i = 0; i < this.bullets.length; i++) {
             var bullet = this.bullets[i];
             if (playerHit(this.player, bullet)) {
+                bullet.alive = false;                
                 this.player.scream.play();
+                this.player.resetPosition(this);
             }
         }
     }
@@ -125,13 +129,13 @@ class Game {
     }
 
     spawnBackgroundStars() {
-        while (this.stars.length < 100) {
+        while (this.stars.length < 200) {
             this.stars.push(new BackgroundStar(this));
         }
     }
 
     spawnEnemy() {
-        while (this.enemies.length < 6) {
+        while (this.enemies.length < 10) {
             this.enemies.push(new Enemy(this));
         }
     }
@@ -210,7 +214,7 @@ class Player {
             this.y += speed * dt;
         }
 
-        // keep the player trapped inside the arena or they die mehehehehhehehehehehwhehwela kdnhaw lt
+        // keep the player trapped inside the arena
         if ((this.x - (this.width/2)) <= game.arena.x) {
             this.x = game.arena.x + (this.width/2);
         }
@@ -228,7 +232,6 @@ class Player {
         if (this.buttons.space && (Date.now() / 1000) >= this.nextFire) {
             game.bullets.push(new Bullet(this.x, (this.y - this.height), 0, -1000, 2));
             this.nextFire = (Date.now() / 1000) + this.gunCooldown; 
-            // console.log(Date.now());
         }
     }
 
@@ -288,6 +291,12 @@ class Player {
                 this.buttons.down = false;
                 break;
         }
+    }
+
+    // reset player position to default
+    resetPosition(game) {        
+        this.x = game.arena.width / 2;
+        this.y = game.arena.height * 0.9;
     }
 }
 
