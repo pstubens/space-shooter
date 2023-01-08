@@ -77,8 +77,7 @@ class Game {
                 var enemy = this.enemies[j];
                 if (enemyHit(bullet, enemy)) { // collision detection is working!
                     this.bullets.splice(i, 1);
-                    this.enemies.splice(j, 1);
-                    enemy.explosion.play();
+                    enemy.health -= 1;
                 }  
             }
         }
@@ -180,7 +179,7 @@ class Player {
         this.y = game.arena.height * 0.9;
         this.width = 20;
         this.height = 20;
-        this.gunCooldown = 0.2; // time between shots
+        this.gunCooldown = 0.25; // time between shots
         this.nextFire = Date.now() / 1000; // time after which we may fire gun
         this.scream = new Sound("sounds/Wilhelm scream.mp3");
         this.scream.setVolume(0.2);
@@ -303,20 +302,28 @@ class Player {
 // Enemy
 class Enemy {
     constructor(game) {
-        this.x = game.arena.x + (game.arena.width - 30) * Math.random();
-        this.y = game.arena.y - 40;
-        this.xSpeed = 0;
-        this.ySpeed = 40 + (Math.random() * 60);
-        this.alive = true;
         this.width = 30;
         this.height = 30;
-        this.gunCooldown = Math.random() * 5; // time between shots
-        this.nextFire = (Date.now() / 1000) + (Math.random() * 5); // time after which enemy may fire gun
+        this.health = 2;
+        this.xSpeed = 0;
+        this.ySpeed = 40 + (Math.random() * 80);
         this.color = "#ff0000";
+        if ((Math.random() * 7) < 1) {
+            this.health = 10;
+            this.width *= 2;
+            this.height *= 2;
+            this.ySpeed = 40;
+            this.color = "#FFA500";
+        }
+        this.x = game.arena.x + (game.arena.width - this.width) * Math.random();
+        this.y = game.arena.y - 40;  
+        this.alive = true;
+        this.gunCooldown = Math.random() * 5; // time between shots
+        this.nextFire = (Date.now() / 1000) + (Math.random() * 5); // time after which enemy may fire gun        
         this.scream = new Sound("sounds/Wilhelm scream.mp3");
         this.scream.setVolume(0.2);
         this.explosion = new Sound("sounds/explosion.mp3");
-        this.explosion.setVolume(0.1);
+        this.explosion.setVolume(0.1);  
     }
     
     update(dt, game) {
@@ -333,6 +340,11 @@ class Enemy {
         if ((Date.now() / 1000) >= this.nextFire) {
             game.bullets.push(new Bullet(this.x + (this.width / 2), this.y + this.height, 0, 500, 2));
             this.nextFire = (Date.now() / 1000) + (Math.random() * 5); 
+        }
+
+        if (this.health <= 0) {
+            this.explosion.play();
+            this.alive = false;
         }
     }
 
@@ -357,6 +369,7 @@ class BackgroundStar {
         this.xSpeed = 0;
         this.ySpeed = 50 + 100*Math.random();
         this.alive = true;
+        this.color = getRandomColor();
     }
 
     update(dt, game) {
@@ -370,7 +383,7 @@ class BackgroundStar {
     }
 
     render(canvas, context) {
-        context.strokeStyle = "#008080";
+        context.strokeStyle = this.color;
         context.beginPath(); 
         context.arc(this.x, this.y, 0.5, 0, 2*Math.PI);
         context.stroke();
@@ -532,4 +545,12 @@ class Sound {
     }
 }
 
-
+//random colours yay
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
