@@ -345,6 +345,7 @@ class Enemy {
         if (this.health <= 0) {
             this.explosion.play();
             this.alive = false;
+            // insert creation of powerup at this.x and this.y, but in the middle of the square
         }
     }
 
@@ -358,6 +359,11 @@ class Enemy {
         context.lineTo(this.x, this.y);
         context.stroke();
 }
+
+}
+
+// powerup
+class Powerup {
 
 }
 
@@ -480,19 +486,20 @@ function isOverlap(a, b) {
     return false;
 }
 
-// create new function for player collision with enemy
+// player powerup collision
+function hitPowerUp(player, powerup) {
 
-
+}
 
 // check if bullets hit an enemy (square)
 // a is bullet, b is enemy
 // collision between circle and square
-function enemyHit(a, b) {
+function enemyHit(bullet, enemy) {
     if (
-        ((a.y < b.y + b.height) && // top of circle to bottom of square
-        (a.y > b.y) && // circle below, greater y, than top line of square
-        ((a.x) > b.x) && // right of b.x
-        ((a.x) < (b.x + b.width))) // left of b.x + b. width
+        (bullet.y < enemy.y + enemy.height) && // top of circle to bottom of square
+        (bullet.y > enemy.y) && // circle below, greater y, than top line of square
+        ((bullet.x) > enemy.x) && // right of b.x
+        ((bullet.x) < (enemy.x + enemy.width)) // left of b.x + b. width
     ) {
         // collision
         return true;
