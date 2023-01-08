@@ -323,7 +323,7 @@ class Enemy {
         // have each enemy have a bullet fire once every 5 + (1-5) seconds with a 5 second firedelay
         if ((Date.now() / 1000) >= this.nextFire) {
             game.bullets.push(new Bullet(this.x + (this.width / 2), this.y + this.height, 0, 500, 2));
-            this.nextFire = (Date.now() / 1000) + (Math.random() * 5) ; 
+            this.nextFire = (Date.now() / 1000) + (Math.random() * 5); 
         }
     }
 
