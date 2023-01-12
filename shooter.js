@@ -27,6 +27,7 @@ class Game {
         this.bullets = new Array();
         this.stars = new Array();
         this.enemies = new Array();
+        this.powerups = new Array();
 
         // Set up mouse event listeners
         canvas.addEventListener("mousemove", (e) => this.onMouseMove(e));
@@ -358,13 +359,13 @@ class Enemy {
         context.lineTo(this.x, this.y + this.height);
         context.lineTo(this.x, this.y);
         context.stroke();
-}
-
+    }
 }
 
 // powerup
+// this.powerups
 class Powerup {
-
+   
 }
 
 // background stars

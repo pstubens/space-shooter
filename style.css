@@ -1,0 +1,44 @@
+/* Mobile Version Display by default */
+#wrapper {
+    width: 100%;
+    margin: none;
+    padding: none;
+}
+canvas {
+    width: 100%;
+    border: 1px solid white;
+    /* object-fit: contain; */
+}
+body {
+    background-color: black;
+    color: white;
+}
+h2 {
+    padding: 20px;
+}
+h3 {
+    padding 20px;
+}
+nav {
+    padding: 10px;
+}
+nav a {
+    text-decoration: none;
+    padding: 10px;
+    color: white;
+    text-shadow: 1px 1px 1px grey;
+    font-size: 120%;
+}
+nav a:hover {
+    color: aqua;
+}
+
+
+/* Tablet Display */
+@media screen and (min-width: 600px) {
+    canvas {
+        width: auto;
+    }
+}
+
+/* Desktop Display */
