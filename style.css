@@ -7,6 +7,7 @@
 canvas {
     width: 100%;
     border: 1px solid white;
+    float: left;
     /* object-fit: contain; */
 }
 body {
@@ -32,10 +33,12 @@ nav a {
 nav a:hover {
     color: aqua;
 }
-
+dt {
+    padding-left: 10px;
+}
 
 /* Tablet Display */
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 500px) {
     canvas {
         width: auto;
     }
